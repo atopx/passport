@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package protocol.template;
+option go_package = "./protocol";
+
+import "common.proto";
+
+enum TemplateType {
+  TEMPLATE_NONE = 0;
+  TEMPLATE_SAMPLE = 1;
+  TEMPLATE_COMPLEX = 2;
+}
+
+message Template {
+  int64 id = 1;
+  string name = 2;
+  TemplateType type = 3;
+
+  // 删除时间
+  int64 delete_at = 1001;
+  // 创建时间
+  int64 create_at = 1002;
+  // 更新时间
+  int64 update_at = 1003;
+}
+
+service TemplateService {
+  // CreateUser 创建用户
+  rpc Create(CreateTemplateParam) returns (CreateTemplateReply);
+  // GetUser 查询用户
+  rpc Get(GetTemplateParam) returns (GetTemplateReply);
+}
+
+message CreateTemplateParam {
+  common.Header header = 1;
+}
+message CreateTemplateReply {
+  common.Error error = 1;
+}
+
+message GetTemplateParam {
+  common.Header header = 1;
+}
+message GetTemplateReply {
+  common.Error error = 1;
+}

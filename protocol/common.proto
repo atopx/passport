@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protocol.common;
+option go_package = "./protocol";
+
+enum ErrorCode {
+  ERROR_NONE = 0;
+  ERROR_SYSTEM = 500;
+}
+
+message Header {
+  int64 trace_id = 1;
+  int64 user_id = 2;
+  string client = 3;
+}
+
+message Error {
+  int64 trace_id = 1;
+  ErrorCode code = 2;
+  string message = 3;
+}
