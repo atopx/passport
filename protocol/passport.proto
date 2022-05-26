@@ -1,0 +1,196 @@
+syntax = "proto3";
+
+package protocol;
+option go_package = "./protocol";
+
+// 通用部分
+message RequestHeader {
+  int64 trace_id = 1;
+  int64 user_id = 2;
+  string client = 3;
+}
+
+message ResponseHeader {
+  int64 trace_id = 1;
+  string code = 2;
+  string message = 3;
+}
+
+message Pager {
+  int64 total = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message TimeRangeFilter {
+  int64 left = 1;
+  int64 right = 2;
+}
+
+
+// PassportService 认证服务
+service PassportService {
+  // Health 服务健康检查
+  rpc Health(HealthParam) returns (HealthParamReply);
+  // CreateUser 创建用户
+  rpc CreateUser(CreateUserParam) returns (CreateUserReply);
+  // DeleteUser 删除用户
+  rpc DeleteUser(DeleteUserParam) returns (DeleteUserReply);
+  // UpdateUser 更新用户
+  rpc UpdateUser(UpdateUserParam)  returns (UpdateUserReply);
+
+  // SearchUser 搜索用户
+  rpc SearchUser(SearchUserParam) returns (SearchUserReply);
+  // GetUserById 获取用户
+  rpc GetUserById(GetUserByIdParam) returns (GetUserByIdReply);
+  // GetUserByToken 基于token查询用户(已失效 => ERROR_TOKEN)
+  rpc GetUserByToken(GetUserByTokenParam) returns (GetUserByTokenReply);
+
+  // SignIn 登陆
+  rpc SignIn(SignInParam)  returns(SignInReply);
+  // SignOut 登出
+  rpc SignOut(SignOutParam) returns(SignOutReply);
+}
+
+// Rule 角色
+enum Rule {
+  // RULE_NONE 未知
+  RULE_NONE = 0;
+  // RULE_ROUTINE 初级用户
+  RULE_ROUTINE = 1;
+  // RULE_VIP 高级用户
+  RULE_VIP = 2;
+  // RULE_ADMIN 管理员
+  RULE_ADMIN = 3;
+  // RULE_BLACK 黑名单用户
+  RULE_BLACK = 100;
+  // RULE_OWNER 拥有者
+  RULE_OWNER = 1000;
+}
+
+// User 认证用户model
+message User {
+  // 用户ID
+  int64 id = 1;
+  // 认证账号
+  string account = 2;
+  // 认证密码
+  string password = 3;
+  // 角色
+  Rule rule = 4;
+
+  // 最后登陆时间
+  int64 login_at = 1000;
+  // 删除时间
+  int64 delete_at = 1001;
+  // 创建时间
+  int64 create_at = 1002;
+  // 更新时间
+  int64 update_at = 1003;
+}
+
+message HealthParam {
+  RequestHeader header = 1;
+}
+
+message HealthParamReply{
+  ResponseHeader header = 1;
+}
+
+message SearchUserParam {
+  RequestHeader header = 1;
+  int64 page = 2;
+  int64 size = 3;
+  SearchUserParamFilter filter = 4;
+}
+
+message SearchUserParamFilter {
+  repeated int64 ids = 1;
+  repeated string accounts = 2;
+  repeated Rule rules = 3;
+  TimeRangeFilter login_at = 4;
+  TimeRangeFilter delete_at = 5;
+  TimeRangeFilter create_at = 6;
+  TimeRangeFilter update_at = 7;
+}
+
+message SearchUserReply {
+  ResponseHeader header = 1;
+  Pager pager = 2;
+  repeated User users = 3;
+}
+
+message GetUserByIdParam {
+  RequestHeader header = 1;
+  int64 id = 2;
+}
+
+message GetUserByIdReply {
+  ResponseHeader header = 1;
+  User user = 2;
+}
+
+message GetUserByTokenParam {
+  RequestHeader header = 1;
+  string token = 2;
+}
+
+message GetUserByTokenReply {
+  ResponseHeader header = 1;
+  User user = 2;
+}
+
+message SignInParam {
+  RequestHeader header = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message SignInReply {
+  ResponseHeader header = 1;
+  string token = 2;
+  int64 expire = 3;
+}
+
+message SignOutParam {
+  RequestHeader header = 1;
+  string token = 2;
+}
+
+message SignOutReply {
+  ResponseHeader header = 1;
+}
+
+message CreateUserParam {
+  RequestHeader header = 1;
+  string username = 2;
+  string password = 3;
+  Rule rule = 4;
+  bool encrypted = 5;
+  string domain = 6;
+  string keyword = 7;
+}
+
+message CreateUserReply {
+  ResponseHeader header = 1;
+  User user = 2;
+}
+
+message UpdateUserParam {
+  RequestHeader header = 1;
+  User user = 2;
+}
+
+message UpdateUserReply {
+  ResponseHeader header = 1;
+  User user = 2;
+}
+
+message DeleteUserParam {
+  RequestHeader header = 1;
+  int64 id = 2;
+}
+
+message DeleteUserReply {
+  ResponseHeader header = 1;
+}

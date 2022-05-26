@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	gorm_logger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"template/internal/system"
+	"passport/internal/common"
 	"time"
 )
 
@@ -73,9 +73,9 @@ func (log *DBLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 
 func (log *DBLogger) WithContext(ctx context.Context) *zap.Logger {
 	if ctx != nil {
-		switch value := ctx.Value(system.SERVER_CONTEXT_KEY).(type) {
-		case system.ServerContextValue:
-			return log.ZapLogger.With(zap.Object(system.SERVER_CONTEXT_KEY, value))
+		switch value := ctx.Value(common.SERVER_CONTEXT_KEY).(type) {
+		case common.ServerContextValue:
+			return log.ZapLogger.With(zap.Object(common.SERVER_CONTEXT_KEY, value))
 		}
 	}
 	return log.ZapLogger

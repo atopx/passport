@@ -9,9 +9,9 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"passport/internal/interceptor"
+	"passport/logger"
 	"syscall"
-	"template/internal/interceptor"
-	"template/logger"
 )
 
 func NewServer() *grpc.Server {

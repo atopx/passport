@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
-	"template/internal/system"
+	"passport/internal/common"
 )
 
 var logger *zap.Logger
@@ -59,9 +59,9 @@ func Panic(ctx context.Context, message string, fields ...zapcore.Field) {
 func output(ctx context.Context, level zapcore.Level, message string, fields ...zapcore.Field) {
 	if entity := logger.Check(level, message); entity != nil {
 		if ctx != nil {
-			switch value := ctx.Value(system.SERVER_CONTEXT_KEY).(type) {
-			case system.ServerContextValue:
-				fields = append(fields, zap.Object(system.SERVER_CONTEXT_KEY, value))
+			switch value := ctx.Value(common.SERVER_CONTEXT_KEY).(type) {
+			case common.ServerContextValue:
+				fields = append(fields, zap.Object(common.SERVER_CONTEXT_KEY, value))
 			}
 		}
 		entity.Write(fields...)

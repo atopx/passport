@@ -1,0 +1,27 @@
+### 健康检查
+GRPC 127.0.0.1:8001/protocol.PassportService/Health
+
+{
+  "header": {
+    "client": "test",
+    "user_id": "-1",
+    "trace_id": "-1"
+  }
+}
+
+### 创建用户
+GRPC 127.0.0.1:8001/protocol.PassportService/CreateUser
+
+{
+  "header": {
+    "client": "test",
+    "user_id": "-1",
+    "trace_id": "-1"
+  },
+  "username": "atopx",
+  "password": "123456",
+  "encrypted": true,
+  "rule": 1000,
+  "domain": "all",
+  "keyword": "all"
+}

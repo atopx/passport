@@ -4,7 +4,7 @@ import (
 	"context"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"template/logger"
+	"passport/logger"
 	"time"
 )
 

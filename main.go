@@ -4,11 +4,12 @@ import (
 	"flag"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"log"
-	"template/internal/handler"
-	"template/internal/service"
-	"template/logger"
-	"template/protocol"
+	"passport/internal/handler"
+	"passport/internal/service"
+	"passport/logger"
+	"passport/protocol"
 )
 
 func init() {
@@ -20,18 +21,21 @@ func init() {
 		log.Panicf("load config error: %s", err)
 	}
 	// 日志初始化
-	var loglevel string
+	var loglevel zapcore.Level
 	switch viper.GetString("server.env") {
 	case "dev":
-		loglevel = zap.DebugLevel.String()
-		logger.Warn(nil, "run mode is develop.")
+		loglevel = zap.DebugLevel
 	case "prod":
-		loglevel = zap.InfoLevel.String()
+		loglevel = zap.InfoLevel
 	default:
-		loglevel = zap.InfoLevel.String()
+		loglevel = zap.InfoLevel
 	}
-	if err := logger.Setup(loglevel); err != nil {
+	if err := logger.Setup(loglevel.String()); err != nil {
 		panic(err)
+	}
+	switch loglevel {
+	case zap.DebugLevel:
+		logger.Warn(nil, "run mode is develop.")
 	}
 }
 
@@ -39,13 +43,13 @@ func main() {
 	// 初始化基础组件 TODO: mysql, redis, kafka, rabbitmq等基础设施
 	db, err := handler.NewMySQLConnect()
 	if err != nil {
-		logger.Fatal(nil, "new mysql error", zap.Error(err))
+		logger.Fatal(nil, "connect mysql error", zap.Error(err))
 	}
 
 	// 初始化服务
 	server := handler.NewServer()
-	srv := service.NewTemplateService(db)
-	protocol.RegisterTemplateServiceServer(server, srv)
+	srv := service.New(db)
+	protocol.RegisterPassportServiceServer(server, srv)
 
 	// 启动服务
 	handler.StartServer(server)

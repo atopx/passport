@@ -1,4 +1,4 @@
-package system
+package common
 
 import "go.uber.org/zap/zapcore"
 

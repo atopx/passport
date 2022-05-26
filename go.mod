@@ -1,10 +1,11 @@
-module template
+module passport
 
 go 1.18
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/json-iterator/go v1.1.12
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.11.0
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.46.2
