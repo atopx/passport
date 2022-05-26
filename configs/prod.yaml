@@ -9,3 +9,7 @@ database:
   username: atopx
   password: 123456
   dbname: template
+  max_idle: 10
+  max_open: 100
+  max_life: 3600
+

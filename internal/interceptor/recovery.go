@@ -8,19 +8,20 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"runtime"
+	"template/internal/system"
 	"template/logger"
 )
 
-func _recovery() grpc.UnaryServerInterceptor {
-	customFunc := func(ctx context.Context, param interface{}) (err error) {
+func Recovery() grpc.UnaryServerInterceptor {
+	handler := func(ctx context.Context, param interface{}) (err error) {
 		track := make([]byte, 1<<16)
 		runtime.Stack(track, false)
-		logger.Error("recovery", zap.Error(err),
-			zap.Object("server", system),
+		logger.Error(ctx, "recovery", zap.Error(err),
+			zap.Object("service", ctx.Value(system.SERVER_CONTEXT_KEY).(system.ServerContextValue)),
 			zap.Any("param", param),
 			zap.ByteString("track", track),
 		)
 		return status.Errorf(codes.Unknown, "Server Internal Error")
 	}
-	return grpc_recovery.UnaryServerInterceptor(grpc_recovery.WithRecoveryHandlerContext(customFunc))
+	return grpc_recovery.UnaryServerInterceptor(grpc_recovery.WithRecoveryHandlerContext(handler))
 }

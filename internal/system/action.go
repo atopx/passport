@@ -1,4 +1,4 @@
-package model
+package system
 
 import (
 	"context"
@@ -10,6 +10,7 @@ type Action struct {
 	ctx     context.Context
 	traceId int64
 	userId  int64
+	client  string
 
 	DB *gorm.DB
 }
@@ -18,6 +19,7 @@ func (action *Action) SetContext(ctx context.Context, header *protocol.Header) {
 	action.ctx = ctx
 	action.traceId = header.GetTraceId()
 	action.userId = header.GetUserId()
+	action.client = header.GetClient()
 }
 
 func (action *Action) SetDatabase(db *gorm.DB) {

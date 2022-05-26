@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"template/internal/model"
+	"template/internal/system"
 	"template/protocol"
 )
 
 type Action struct {
-	model.Action
+	system.Action
 }
 
 func NewActionWithContext(ctx context.Context, header *protocol.Header) *Action {

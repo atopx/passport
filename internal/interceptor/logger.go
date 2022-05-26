@@ -8,12 +8,11 @@ import (
 	"time"
 )
 
-func _logger() grpc.UnaryServerInterceptor {
+func Logger() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, param interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
 		start := time.Now()
 		reply, err := handler(ctx, param)
-		logger.Info("Interchange", zap.Error(err),
-			zap.Object("server", system),
+		logger.Info(ctx, "interchange", zap.Error(err),
 			zap.Duration("cost", time.Since(start)),
 			zap.Any("param", param),
 		)

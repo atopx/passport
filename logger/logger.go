@@ -1,10 +1,11 @@
 package logger
 
 import (
-	"os"
-
+	"context"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
+	"template/internal/system"
 )
 
 var logger *zap.Logger
@@ -27,30 +28,42 @@ func Setup(level string) (err error) {
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}), zapcore.AddSync(os.Stdout), loggerLevel)
-	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
 	return err
 }
 
-func Debug(message string, fields ...zapcore.Field) {
-	logger.Debug(message, fields...)
+func Debug(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.DebugLevel, message, fields...)
 }
 
-func Info(message string, fields ...zapcore.Field) {
-	logger.Info(message, fields...)
+func Info(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.InfoLevel, message, fields...)
 }
 
-func Warn(message string, fields ...zapcore.Field) {
-	logger.Warn(message, fields...)
+func Warn(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.WarnLevel, message, fields...)
 }
 
-func Error(message string, fields ...zapcore.Field) {
-	logger.Error(message, fields...)
+func Error(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.ErrorLevel, message, fields...)
 }
 
-func Fatal(message string, fields ...zapcore.Field) {
-	logger.Fatal(message, fields...)
+func Fatal(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.FatalLevel, message, fields...)
 }
 
-func Panic(message string, fields ...zapcore.Field) {
-	logger.Panic(message, fields...)
+func Panic(ctx context.Context, message string, fields ...zapcore.Field) {
+	output(ctx, zap.PanicLevel, message, fields...)
+}
+
+func output(ctx context.Context, level zapcore.Level, message string, fields ...zapcore.Field) {
+	if entity := logger.Check(level, message); entity != nil {
+		if ctx != nil {
+			switch value := ctx.Value(system.SERVER_CONTEXT_KEY).(type) {
+			case system.ServerContextValue:
+				fields = append(fields, zap.Object(system.SERVER_CONTEXT_KEY, value))
+			}
+		}
+		entity.Write(fields...)
+	}
 }

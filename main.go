@@ -2,16 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"log"
-	"net"
-	"os"
-	"os/signal"
-	"syscall"
-	"template/internal/interceptor"
+	"template/internal/handler"
 	"template/internal/service"
 	"template/logger"
 	"template/protocol"
@@ -30,6 +24,7 @@ func init() {
 	switch viper.GetString("server.env") {
 	case "dev":
 		loglevel = zap.DebugLevel.String()
+		logger.Warn(nil, "run mode is develop.")
 	case "prod":
 		loglevel = zap.InfoLevel.String()
 	default:
@@ -39,28 +34,19 @@ func init() {
 		panic(err)
 	}
 }
+
 func main() {
-	// 系统初始化
-	linstener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetInt("server.port")))
+	// 初始化基础组件 TODO: mysql, redis, kafka, rabbitmq等基础设施
+	db, err := handler.NewMySQLConnect()
 	if err != nil {
-		logger.Panic("start server", zap.Error(err))
+		logger.Fatal(nil, "new mysql error", zap.Error(err))
 	}
-	server := grpc.NewServer(interceptor.New(viper.GetString("server.name"), os.Getenv("VERSION")))
-	// 注册服务
-	protocol.RegisterTemplateServiceServer(server, service.NewTemplateService(nil))
-	go func() {
-		if err = server.Serve(linstener); err != nil {
-			logger.Panic("start server", zap.Error(err))
-		}
-	}()
-	// 优雅启停
-	controller := make(chan os.Signal, 1)
-	signal.Notify(controller, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
-	for {
-		si := <-controller
-		switch si {
-		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			server.Stop()
-		}
-	}
+
+	// 初始化服务
+	server := handler.NewServer()
+	srv := service.NewTemplateService(db)
+	protocol.RegisterTemplateServiceServer(server, srv)
+
+	// 启动服务
+	handler.StartServer(server)
 }
