@@ -2,7 +2,7 @@ package interceptor
 
 import (
 	"context"
-	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -21,5 +21,5 @@ func Recovery() grpc.UnaryServerInterceptor {
 		)
 		return status.Errorf(codes.Internal, "Server Internal Error")
 	}
-	return grpc_recovery.UnaryServerInterceptor(grpc_recovery.WithRecoveryHandlerContext(handler))
+	return recovery.UnaryServerInterceptor(recovery.WithRecoveryHandlerContext(handler))
 }

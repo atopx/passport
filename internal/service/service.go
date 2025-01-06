@@ -9,6 +9,7 @@ import (
 
 type Service struct {
 	db *gorm.DB
+	protocol.UnimplementedPassportServiceServer
 }
 
 func New(db *gorm.DB) *Service {

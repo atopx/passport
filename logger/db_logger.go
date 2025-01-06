@@ -3,7 +3,7 @@ package logger
 import (
 	"context"
 	"go.uber.org/zap"
-	gorm_logger "gorm.io/gorm/logger"
+	glogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 	"passport/internal/common"
 	"time"
@@ -11,16 +11,16 @@ import (
 
 type DBLogger struct {
 	ZapLogger                 *zap.Logger
-	LogLevel                  gorm_logger.LogLevel
+	LogLevel                  glogger.LogLevel
 	SlowThreshold             time.Duration
 	SkipCallerLookup          bool
 	IgnoreRecordNotFoundError bool
 }
 
-func NewDBLogger() gorm_logger.Interface {
+func NewDBLogger() glogger.Interface {
 	return &DBLogger{
 		ZapLogger:                 logger,
-		LogLevel:                  gorm_logger.Warn,
+		LogLevel:                  glogger.Warn,
 		SlowThreshold:             100 * time.Millisecond,
 		SkipCallerLookup:          false,
 		IgnoreRecordNotFoundError: true,
@@ -28,10 +28,10 @@ func NewDBLogger() gorm_logger.Interface {
 }
 
 func (log *DBLogger) SetAsDefault() {
-	gorm_logger.Default = log
+	glogger.Default = log
 }
 
-func (log *DBLogger) LogMode(level gorm_logger.LogLevel) gorm_logger.Interface {
+func (log *DBLogger) LogMode(level glogger.LogLevel) glogger.Interface {
 	return &DBLogger{
 		ZapLogger:                 log.ZapLogger,
 		SlowThreshold:             log.SlowThreshold,
@@ -42,20 +42,20 @@ func (log *DBLogger) LogMode(level gorm_logger.LogLevel) gorm_logger.Interface {
 }
 
 func (log *DBLogger) Info(ctx context.Context, message string, fields ...interface{}) {
-	if log.LogLevel >= gorm_logger.Info {
+	if log.LogLevel >= glogger.Info {
 		log.WithContext(ctx).Sugar().Infof(message, fields...)
 	}
 
 }
 
 func (log *DBLogger) Warn(ctx context.Context, message string, fields ...interface{}) {
-	if log.LogLevel >= gorm_logger.Warn {
+	if log.LogLevel >= glogger.Warn {
 		log.WithContext(ctx).Sugar().Warnf(message, fields...)
 	}
 }
 
 func (log *DBLogger) Error(ctx context.Context, message string, fields ...interface{}) {
-	if log.LogLevel >= gorm_logger.Error {
+	if log.LogLevel >= glogger.Error {
 		log.WithContext(ctx).Sugar().Errorf(message, fields...)
 	}
 }
@@ -73,9 +73,9 @@ func (log *DBLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 
 func (log *DBLogger) WithContext(ctx context.Context) *zap.Logger {
 	if ctx != nil {
-		switch value := ctx.Value(common.SERVER_CONTEXT_KEY).(type) {
+		switch value := ctx.Value(common.ServerContextKey).(type) {
 		case common.ServerContextValue:
-			return log.ZapLogger.With(zap.Object(common.SERVER_CONTEXT_KEY, value))
+			return log.ZapLogger.With(zap.Object(common.ServerContextKey, value))
 		}
 	}
 	return log.ZapLogger

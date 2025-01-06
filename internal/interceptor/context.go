@@ -16,6 +16,6 @@ func Context(service, version string) grpc.UnaryServerInterceptor {
 		if data, err := jsoniter.Marshal(param); err == nil {
 			value.Trace = jsoniter.Get(data, "header").ToString()
 		}
-		return handler(context.WithValue(ctx, common.SERVER_CONTEXT_KEY, value), param)
+		return handler(context.WithValue(ctx, common.ServerContextKey, value), param)
 	}
 }

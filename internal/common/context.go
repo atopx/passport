@@ -3,7 +3,7 @@ package common
 import "go.uber.org/zap/zapcore"
 
 const (
-	SERVER_CONTEXT_KEY = "server"
+	ServerContextKey = "server"
 )
 
 type ServerContextValue struct {

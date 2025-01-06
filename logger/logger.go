@@ -59,9 +59,9 @@ func Panic(ctx context.Context, message string, fields ...zapcore.Field) {
 func output(ctx context.Context, level zapcore.Level, message string, fields ...zapcore.Field) {
 	if entity := logger.Check(level, message); entity != nil {
 		if ctx != nil {
-			switch value := ctx.Value(common.SERVER_CONTEXT_KEY).(type) {
+			switch value := ctx.Value(common.ServerContextKey).(type) {
 			case common.ServerContextValue:
-				fields = append(fields, zap.Object(common.SERVER_CONTEXT_KEY, value))
+				fields = append(fields, zap.Object(common.ServerContextKey, value))
 			}
 		}
 		entity.Write(fields...)

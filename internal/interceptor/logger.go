@@ -15,6 +15,7 @@ func Logger() grpc.UnaryServerInterceptor {
 		logger.Info(ctx, "interchange", zap.Error(err),
 			zap.Duration("cost", time.Since(start)),
 			zap.Any("param", param),
+			zap.Any("reply", reply),
 		)
 		return reply, err
 	}
