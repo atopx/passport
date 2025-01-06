@@ -14,7 +14,7 @@ import (
 
 func init() {
 	// 配置初始化
-	config := flag.String("c", "configs/prod.yaml", "config file path.")
+	config := flag.String("c", "conf/config.yaml", "config file path.")
 	flag.Parse()
 	viper.SetConfigFile(*config)
 	if err := viper.ReadInConfig(); err != nil {
@@ -23,19 +23,15 @@ func init() {
 	// 日志初始化
 	var loglevel zapcore.Level
 	switch viper.GetString("server.env") {
-	case "dev":
+	case "dev", "debug":
 		loglevel = zap.DebugLevel
-	case "prod":
-		loglevel = zap.InfoLevel
+	case "prod", "production", "release":
+		loglevel = zap.WarnLevel
 	default:
 		loglevel = zap.InfoLevel
 	}
-	if err := logger.Setup(loglevel.String()); err != nil {
+	if err := logger.Setup(loglevel); err != nil {
 		panic(err)
-	}
-	switch loglevel {
-	case zap.DebugLevel:
-		logger.Warn(nil, "run mode is develop.")
 	}
 }
 

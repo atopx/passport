@@ -10,11 +10,7 @@ import (
 
 var logger *zap.Logger
 
-func Setup(level string) (err error) {
-	var loggerLevel = new(zapcore.Level)
-	if err = loggerLevel.UnmarshalText([]byte(level)); err != nil {
-		return err
-	}
+func Setup(level zapcore.Level) (err error) {
 	core := zapcore.NewCore(zapcore.NewJSONEncoder(zapcore.EncoderConfig{
 		TimeKey:        "time",
 		LevelKey:       "level",
@@ -27,7 +23,7 @@ func Setup(level string) (err error) {
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
-	}), zapcore.AddSync(os.Stdout), loggerLevel)
+	}), zapcore.AddSync(os.Stdout), level)
 	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
 	return err
 }
