@@ -2,14 +2,15 @@ package main
 
 import (
 	"flag"
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"log"
 	"passport/internal/handler"
 	"passport/internal/service"
 	"passport/logger"
 	"passport/protocol"
+
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func init() {

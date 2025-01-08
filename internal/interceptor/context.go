@@ -2,10 +2,13 @@ package interceptor
 
 import (
 	"context"
+	"passport/internal/common"
+
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
-	"passport/internal/common"
 )
+
+type args any
 
 func Context(service, version string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, param interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {

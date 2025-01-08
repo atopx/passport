@@ -2,13 +2,14 @@ package interceptor
 
 import (
 	"context"
+	"passport/internal/common"
+	"passport/logger"
+
 	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"passport/internal/common"
-	"passport/logger"
 )
 
 func Recovery() grpc.UnaryServerInterceptor {

@@ -1,11 +1,12 @@
 package action
 
 import (
+	"passport/internal/model"
+	"passport/protocol"
+
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"gorm.io/gorm"
-	"passport/internal/model"
-	"passport/protocol"
 )
 
 func (action *Action) CreateUser(param *protocol.CreateUserParam) (*protocol.CreateUserReply, error) {

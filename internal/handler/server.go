@@ -2,16 +2,17 @@ package handler
 
 import (
 	"fmt"
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"net"
 	"os"
 	"os/signal"
 	"passport/internal/interceptor"
 	"passport/logger"
 	"syscall"
+
+	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 func NewServer() *grpc.Server {
@@ -43,7 +44,7 @@ func StartServer(server *grpc.Server) {
 		}
 	}()
 
-	controller := make(chan os.Signal)
+	controller := make(chan os.Signal, 1)
 	signal.Notify(controller, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
 
 	select {

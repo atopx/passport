@@ -2,10 +2,11 @@ package interceptor
 
 import (
 	"context"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"passport/logger"
 	"time"
+
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 func Logger() grpc.UnaryServerInterceptor {
@@ -13,7 +14,7 @@ func Logger() grpc.UnaryServerInterceptor {
 		start := time.Now()
 		reply, err := handler(ctx, param)
 		logger.Info(ctx, "interchange", zap.Error(err),
-			zap.Duration("cost", time.Since(start)),
+			zap.Duration("elapsed", time.Since(start)),
 			zap.Any("param", param),
 			zap.Any("reply", reply),
 		)

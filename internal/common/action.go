@@ -2,9 +2,10 @@ package common
 
 import (
 	"context"
+	"passport/protocol"
+
 	"google.golang.org/grpc/codes"
 	"gorm.io/gorm"
-	"passport/protocol"
 )
 
 type Action struct {
@@ -44,11 +45,7 @@ func (action *Action) GetDatabase() *gorm.DB {
 }
 
 func (action *Action) NewOkResponseHeader() *protocol.ResponseHeader {
-	return &protocol.ResponseHeader{
-		TraceId: action.GetTraceId(),
-		Code:    codes.OK.String(),
-		Message: "success",
-	}
+	return action.NewResponseHeader(codes.OK, "success")
 }
 
 func (action *Action) NewResponseHeader(code codes.Code, message string) *protocol.ResponseHeader {

@@ -2,9 +2,10 @@ package action
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"passport/internal/common"
 	"passport/protocol"
+
+	"gorm.io/gorm"
 )
 
 type Action struct {

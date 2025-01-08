@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"passport/internal/service/action"
 	"passport/protocol"
+
+	"gorm.io/gorm"
 )
 
 type Service struct {

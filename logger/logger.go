@@ -2,10 +2,11 @@ package logger
 
 import (
 	"context"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"os"
 	"passport/internal/common"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var logger *zap.Logger
@@ -26,6 +27,10 @@ func Setup(level zapcore.Level) (err error) {
 	}), zapcore.AddSync(os.Stdout), level)
 	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
 	return err
+}
+
+func Print(message string, fields ...zapcore.Field) {
+	logger.Info(message, fields...)
 }
 
 func Debug(ctx context.Context, message string, fields ...zapcore.Field) {
@@ -57,7 +62,7 @@ func output(ctx context.Context, level zapcore.Level, message string, fields ...
 		if ctx != nil {
 			switch value := ctx.Value(common.ServerContextKey).(type) {
 			case common.ServerContextValue:
-				fields = append(fields, zap.Object(common.ServerContextKey, value))
+				fields = append(fields, zap.Object(string(common.ServerContextKey), value))
 			}
 		}
 		entity.Write(fields...)

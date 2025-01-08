@@ -2,12 +2,15 @@ package logger
 
 import (
 	"context"
+	"passport/internal/common"
+	"time"
+
 	"go.uber.org/zap"
 	glogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"passport/internal/common"
-	"time"
 )
+
+
 
 type DBLogger struct {
 	ZapLogger                 *zap.Logger
@@ -65,8 +68,8 @@ func (log *DBLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 	sql, row := fc()
 	log.WithContext(ctx).Info("trace",
 		zap.String("file", utils.FileWithLineNum()),
-		zap.Int64("row", row), zap.String("sql", sql),
-		zap.Duration("cost", elapsed),
+		zap.Int64("rows", row), zap.String("sql", sql),
+		zap.Duration("elapsed", elapsed),
 		zap.Error(err),
 	)
 }
@@ -75,7 +78,7 @@ func (log *DBLogger) WithContext(ctx context.Context) *zap.Logger {
 	if ctx != nil {
 		switch value := ctx.Value(common.ServerContextKey).(type) {
 		case common.ServerContextValue:
-			return log.ZapLogger.With(zap.Object(common.ServerContextKey, value))
+			return log.ZapLogger.With(zap.Object(string(common.ServerContextKey), value))
 		}
 	}
 	return log.ZapLogger

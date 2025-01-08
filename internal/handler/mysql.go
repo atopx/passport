@@ -2,12 +2,13 @@ package handler
 
 import (
 	"fmt"
+	"passport/logger"
+	"time"
+
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"passport/logger"
-	"time"
 )
 
 // NewMySQLConnect 创建MySQL连接
